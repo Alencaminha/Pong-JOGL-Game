@@ -24,6 +24,7 @@ public class DiamondBlock {
         gl.glVertex2f(width / 2, height / 2);
         gl.glVertex2f(-width / 2, height / 2);
         gl.glEnd();
+        gl.glFlush();
 
         gl.glRotatef(rotation, 0, 0, 1);
         gl.glTranslatef(-x, -y, 0);

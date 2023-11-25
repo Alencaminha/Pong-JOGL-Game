@@ -1,5 +1,7 @@
 package graphics;
 
+import com.jogamp.newt.event.WindowAdapter;
+import com.jogamp.newt.event.WindowEvent;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
@@ -8,7 +10,8 @@ import inputers.KeyboardInputer;
 import inputers.MouseInputer;
 
 public class Renderer {
-    private static GLWindow window = null;
+    private static GLWindow glWindow = null;
+    private static GLProfile glProfile = null;
     public static int screenWidth = 640;
     public static int screenHeight = 360;
     public static float pixelsWide = 10;
@@ -16,24 +19,37 @@ public class Renderer {
     public static void init() {
         // Initial mandatory setup for everything to have standard settings
         GLProfile.initSingleton();
-        GLProfile profile = GLProfile.get(GLProfile.GL2);
-        GLCapabilities caps = new GLCapabilities(profile);
+        glProfile = GLProfile.get(GLProfile.GL2);
+        GLCapabilities glCapabilities = new GLCapabilities(glProfile);
 
         // Creating and setting some window configurations
-        window = GLWindow.create(caps);
-        window.setSize(screenWidth, screenHeight);
-        window.setResizable(true);
+        glWindow = GLWindow.create(glCapabilities);
+        glWindow.setSize(screenWidth, screenHeight);
+        glWindow.setResizable(true);
 
         // Adding the listeners to the window
-        window.addGLEventListener(new EventListener());
-        window.addKeyListener(new KeyboardInputer());
-        window.addMouseListener(new MouseInputer());
+        glWindow.addGLEventListener(new EventListener());
+        glWindow.addKeyListener(new KeyboardInputer());
+        glWindow.addMouseListener(new MouseInputer());
 
         // Setting the game to 60 FPS
-        FPSAnimator animator = new FPSAnimator(window, 60);
-        animator.start();
+        FPSAnimator fpsAnimator = new FPSAnimator(glWindow, 60);
+        fpsAnimator.start();
+
+        // Properly ends the program when the window is closed
+        glWindow.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowDestroyNotify(WindowEvent windowEvent) {
+                fpsAnimator.stop();
+                System.exit(0);
+            }
+        });
 
         // Finally setting the window visible, starting the game
-        window.setVisible(true);
+        glWindow.setVisible(true);
+    }
+
+    public static GLProfile getGlProfile() {
+        return glProfile;
     }
 }
