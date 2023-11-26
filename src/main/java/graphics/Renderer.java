@@ -6,8 +6,8 @@ import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.util.FPSAnimator;
-import inputers.KeyboardInputer;
-import inputers.MouseInputer;
+import inputs.KeyboardInput;
+import inputs.MouseInput;
 
 public class Renderer {
     private static GLWindow glWindow = null;
@@ -26,11 +26,13 @@ public class Renderer {
         glWindow = GLWindow.create(glCapabilities);
         glWindow.setSize(screenWidth, screenHeight);
         glWindow.setResizable(true);
+        glWindow.setFullscreen(true);
 
         // Adding the listeners to the window
-        glWindow.addGLEventListener(new EventListener());
-        glWindow.addKeyListener(new KeyboardInputer());
-        glWindow.addMouseListener(new MouseInputer());
+        KeyboardInput keyboardInput = new KeyboardInput();
+        glWindow.addKeyListener(keyboardInput);
+        glWindow.addMouseListener(new MouseInput());
+        glWindow.addGLEventListener(new FirstPhase(keyboardInput));
 
         // Setting the game to 60 FPS
         FPSAnimator fpsAnimator = new FPSAnimator(glWindow, 60);
@@ -51,5 +53,9 @@ public class Renderer {
 
     public static GLProfile getGlProfile() {
         return glProfile;
+    }
+
+    public static void main(String[] args) {
+        init();
     }
 }

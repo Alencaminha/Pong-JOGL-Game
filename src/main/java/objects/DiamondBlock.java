@@ -1,43 +1,54 @@
 package objects;
 
 import com.jogamp.opengl.GL2;
-import graphics.EventListener;
 
 public class DiamondBlock {
-    private static float redLevel = 0.5f;
-    private static float greenLevel = 0;
-    private static float blueLevel = 0.5f;
-    private static float alphaLevel = 0.5f;
-    private static float rotation = 45;
+    private final GL2 gl2;
 
-    public static void fillRect(float x, float y, float width, float height) {
-        GL2 gl = EventListener.gl;
+    // Position, size and rotation
+    private float xPosition;
+    private float yPosition;
+    private final float width;
+    private final float height;
+    private final float rotation;
 
-        gl.glTranslatef(x, y, 0);
-        gl.glRotatef(-rotation, 0, 0, 1);
+    // Colors
+    private float redLevel = 0.5f;
+    private float greenLevel = 0;
+    private float blueLevel = 0.5f;
 
-        // Creating a square
-        gl.glColor4f(redLevel, greenLevel, blueLevel, alphaLevel);
-        gl.glBegin(GL2.GL_QUADS);
-        gl.glVertex2f(-width / 2, -height / 2);
-        gl.glVertex2f(width / 2, -height / 2);
-        gl.glVertex2f(width / 2, height / 2);
-        gl.glVertex2f(-width / 2, height / 2);
-        gl.glEnd();
-        gl.glFlush();
-
-        gl.glRotatef(rotation, 0, 0, 1);
-        gl.glTranslatef(-x, -y, 0);
+    public DiamondBlock(GL2 gl2, float x, float y) {
+        this.gl2 = gl2;
+        this.xPosition = x;
+        this.yPosition = y;
+        this.width = 1;
+        this.height = 1;
+        this.rotation = 45;
     }
 
-    public static void setColor(float r, float g, float b, float a) {
-        redLevel = Math.max(0, Math.min(1, Math.abs(r)));
-        greenLevel = Math.max(0, Math.min(1, Math.abs(g)));
-        blueLevel = Math.max(0, Math.min(1, Math.abs(b)));
-        alphaLevel = Math.max(0, Math.min(1, Math.abs(a)));
+    public void renderShape(float xPosition, float yPosition) {
+        // Rotation setup
+        gl2.glTranslatef(xPosition, yPosition, 0);
+        gl2.glRotatef(-rotation, 0, 0, 1);
+
+        // Molding the shape
+        gl2.glColor3f(redLevel, greenLevel, blueLevel);
+        gl2.glBegin(GL2.GL_QUADS);
+        gl2.glVertex2f(-width / 2, -height / 2);
+        gl2.glVertex2f(width / 2, -height / 2);
+        gl2.glVertex2f(width / 2, height / 2);
+        gl2.glVertex2f(-width / 2, height / 2);
+        gl2.glEnd();
+        gl2.glFlush();
+
+        // Rotation cleanup
+        gl2.glRotatef(rotation, 0, 0, 1);
+        gl2.glTranslatef(-xPosition, -yPosition, 0);
     }
 
-    public static void setRotation(float r) {
-        rotation = r;
+    public void setColor(float r, float g, float b) {
+        this.redLevel = Math.max(0, Math.min(1, Math.abs(r)));
+        this.greenLevel = Math.max(0, Math.min(1, Math.abs(g)));
+        this.blueLevel = Math.max(0, Math.min(1, Math.abs(b)));
     }
 }

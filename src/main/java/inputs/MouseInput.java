@@ -1,9 +1,9 @@
-package inputers;
+package inputs;
 
 import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.newt.event.MouseListener;
 
-public class MouseInputer implements MouseListener {
+public class MouseInput implements MouseListener {
     @Override
     public void mouseClicked(MouseEvent mouseEvent) {
         System.out.println("Mouse Click: " + mouseEvent.getX() + " / " + mouseEvent.getY());
@@ -31,7 +31,6 @@ public class MouseInputer implements MouseListener {
 
     @Override
     public void mouseMoved(MouseEvent mouseEvent) {
-        System.out.println("Mouse Move: " + mouseEvent.getX() + " / " + mouseEvent.getY());
     }
 
     @Override
