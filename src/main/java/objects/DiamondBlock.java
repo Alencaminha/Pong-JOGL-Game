@@ -3,30 +3,24 @@ package objects;
 import com.jogamp.opengl.GL2;
 
 public class DiamondBlock {
+    // Engine renderer
     private final GL2 gl2;
-
-    // Position, size and rotation
-    private float xPosition;
-    private float yPosition;
-    private final float width;
-    private final float height;
-    private final float rotation;
 
     // Colors
     private float redLevel = 0.5f;
     private float greenLevel = 0;
     private float blueLevel = 0.5f;
 
-    public DiamondBlock(GL2 gl2, float x, float y) {
+    public DiamondBlock(GL2 gl2) {
         this.gl2 = gl2;
-        this.xPosition = x;
-        this.yPosition = y;
-        this.width = 1;
-        this.height = 1;
-        this.rotation = 45;
     }
 
     public void renderShape(float xPosition, float yPosition) {
+        // Size and rotation values
+        final float width = 1;
+        final float height = 1;
+        final float rotation = 45;
+
         // Rotation setup
         gl2.glTranslatef(xPosition, yPosition, 0);
         gl2.glRotatef(-rotation, 0, 0, 1);
