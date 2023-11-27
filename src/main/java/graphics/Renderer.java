@@ -8,7 +8,6 @@ import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.util.FPSAnimator;
 
 public class Renderer {
-    private static GLWindow glWindow = null;
     private static GLProfile glProfile = null;
     public static int screenWidth = 640;
     public static int screenHeight = 360;
@@ -21,18 +20,15 @@ public class Renderer {
         GLCapabilities glCapabilities = new GLCapabilities(glProfile);
 
         // Creating and setting some window configurations
-        glWindow = GLWindow.create(glCapabilities);
+        GLWindow glWindow = GLWindow.create(glCapabilities);
         glWindow.setSize(screenWidth, screenHeight);
         glWindow.setResizable(true);
         // glWindow.setFullscreen(true);
 
         // Adding the listeners
-        MainMenu mainMenu = new MainMenu();
-        glWindow.addGLEventListener(mainMenu);
-        glWindow.addMouseListener(mainMenu);
-        /*GameScene gameScene = new GameScene();
+        GameScene gameScene = new GameScene();
         glWindow.addGLEventListener(gameScene);
-        glWindow.addKeyListener(gameScene);*/
+        glWindow.addKeyListener(gameScene);
 
         // Setting the game to 60 FPS
         FPSAnimator fpsAnimator = new FPSAnimator(glWindow, 60);

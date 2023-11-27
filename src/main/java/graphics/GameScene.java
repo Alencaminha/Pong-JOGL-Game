@@ -6,7 +6,9 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.util.gl2.GLUT;
+import objects.Ball;
 import objects.DiamondBlock;
+import objects.Paddle;
 
 public class GameScene implements GLEventListener, KeyListener {
     // Engine renderers
@@ -18,8 +20,10 @@ public class GameScene implements GLEventListener, KeyListener {
     private final float screenHeight = Renderer.screenHeight / (Renderer.screenWidth / Renderer.pixelsWide);
 
     // Game objects
+    private Paddle paddle;
+    private Ball ball;
     private DiamondBlock diamondBlock;
-    private float playerXPosition = -1;
+    private float playerXPosition = 0;
     private float playerSpeed = 0;
 
     @Override
@@ -29,6 +33,8 @@ public class GameScene implements GLEventListener, KeyListener {
         gl2.glClearColor(1, 1, 1, 1);
 
         // Creating the objects
+        paddle = new Paddle(gl2);
+        ball = new Ball(gl2);
         diamondBlock = new DiamondBlock(gl2);
     }
 
@@ -42,10 +48,10 @@ public class GameScene implements GLEventListener, KeyListener {
         gl2 = glAutoDrawable.getGL().getGL2();
         gl2.glClear(GL2.GL_COLOR_BUFFER_BIT);
 
-        renderText(0, 0, "TEST");
-
         playerXPosition += playerSpeed;
-        diamondBlock.renderShape(playerXPosition, 0);
+        paddle.renderShape(playerXPosition, -2);
+        ball.renderShape(2, 0);
+        diamondBlock.renderShape(0, 2);
     }
 
     @Override
