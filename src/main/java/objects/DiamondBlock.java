@@ -41,8 +41,8 @@ public class DiamondBlock {
     }
 
     public void setColor(float r, float g, float b) {
-        this.redLevel = Math.max(0, Math.min(1, Math.abs(r)));
-        this.greenLevel = Math.max(0, Math.min(1, Math.abs(g)));
-        this.blueLevel = Math.max(0, Math.min(1, Math.abs(b)));
+        redLevel = Math.max(0, Math.min(1, Math.abs(r)));
+        greenLevel = Math.max(0, Math.min(1, Math.abs(g)));
+        blueLevel = Math.max(0, Math.min(1, Math.abs(b)));
     }
 }

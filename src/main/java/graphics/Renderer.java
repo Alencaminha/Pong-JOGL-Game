@@ -28,7 +28,8 @@ public class Renderer {
         // Adding the listeners
         GameScene gameScene = new GameScene();
         glWindow.addGLEventListener(gameScene);
-        glWindow.addKeyListener(gameScene);
+        glWindow.addKeyListener(gameScene.keyAdapter);
+        glWindow.addMouseListener(gameScene.mouseAdapter);
 
         // Setting the game to 60 FPS
         FPSAnimator fpsAnimator = new FPSAnimator(glWindow, 60);

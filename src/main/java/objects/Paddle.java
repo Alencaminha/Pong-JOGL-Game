@@ -1,6 +1,7 @@
 package objects;
 
 import com.jogamp.opengl.GL2;
+import graphics.Renderer;
 
 public class Paddle {
     // Engine renderer
@@ -35,9 +36,16 @@ public class Paddle {
         gl2.glTranslatef(-xPosition, -yPosition, 0);
     }
 
+    public float getPosition(float mouseXPosition) {
+        float paddleLimit = (Renderer.pixelsWide / 2) - 1;
+        if (mouseXPosition < -paddleLimit) {
+            return -paddleLimit;
+        } else return Math.min(mouseXPosition, paddleLimit);
+    }
+
     public void setColor(float r, float g, float b) {
-        this.redLevel = Math.max(0, Math.min(1, Math.abs(r)));
-        this.greenLevel = Math.max(0, Math.min(1, Math.abs(g)));
-        this.blueLevel = Math.max(0, Math.min(1, Math.abs(b)));
+        redLevel = Math.max(0, Math.min(1, Math.abs(r)));
+        greenLevel = Math.max(0, Math.min(1, Math.abs(g)));
+        blueLevel = Math.max(0, Math.min(1, Math.abs(b)));
     }
 }

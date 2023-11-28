@@ -1,8 +1,7 @@
-package objects;
+package graphics;
 
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
-import graphics.Renderer;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

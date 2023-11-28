@@ -1,7 +1,6 @@
 package graphics;
 
-import com.jogamp.newt.event.KeyEvent;
-import com.jogamp.newt.event.KeyListener;
+import com.jogamp.newt.event.*;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
@@ -10,10 +9,10 @@ import objects.Ball;
 import objects.DiamondBlock;
 import objects.Paddle;
 
-public class GameScene implements GLEventListener, KeyListener {
+public class GameScene implements GLEventListener {
     // Engine renderers
-    private static GL2 gl2;
-    private static final GLUT glut = new GLUT();
+    private GL2 gl2;
+    private final GLUT glut = new GLUT();
 
     // Screen sizes
     private final float screenWidth = Renderer.pixelsWide;
@@ -23,8 +22,7 @@ public class GameScene implements GLEventListener, KeyListener {
     private Paddle paddle;
     private Ball ball;
     private DiamondBlock diamondBlock;
-    private float playerXPosition = 0;
-    private float playerSpeed = 0;
+    private float mouseXPosition = 0;
 
     @Override
     public void init(GLAutoDrawable glAutoDrawable) {
@@ -48,8 +46,7 @@ public class GameScene implements GLEventListener, KeyListener {
         gl2 = glAutoDrawable.getGL().getGL2();
         gl2.glClear(GL2.GL_COLOR_BUFFER_BIT);
 
-        playerXPosition += playerSpeed;
-        paddle.renderShape(playerXPosition, -2);
+        paddle.renderShape(paddle.getPosition(mouseXPosition), -2);
         ball.renderShape(2, 0);
         diamondBlock.renderShape(0, 2);
     }
@@ -63,34 +60,26 @@ public class GameScene implements GLEventListener, KeyListener {
         gl2.glMatrixMode(GL2.GL_MODELVIEW);
     }
 
-    @Override
-    public void keyPressed(KeyEvent keyEvent) {
-        float speed = 0.2f;
-        switch (keyEvent.getKeyCode()) {
-            case KeyEvent.VK_A, KeyEvent.VK_LEFT:
-                playerSpeed = -speed;
-                System.out.println("Left");
-                break;
-            case KeyEvent.VK_D, KeyEvent.VK_RIGHT:
-                playerSpeed = speed;
-                System.out.println("Right");
-                break;
-            case KeyEvent.VK_ESCAPE:
+    KeyAdapter keyAdapter = new KeyAdapter() {
+        @Override
+        public void keyPressed(KeyEvent keyEvent) {
+            super.keyPressed(keyEvent);
+            if (keyEvent.getKeyCode() == KeyEvent.VK_ESCAPE) {
                 System.exit(0);
-                break;
+            }
         }
-    }
+    };
 
-    @Override
-    public void keyReleased(KeyEvent keyEvent) {
-        switch (keyEvent.getKeyCode()) {
-            case KeyEvent.VK_A, KeyEvent.VK_LEFT, KeyEvent.VK_D, KeyEvent.VK_RIGHT:
-                playerSpeed = 0;
-                break;
+    MouseAdapter mouseAdapter = new MouseAdapter() {
+        @Override
+        public void mouseMoved(MouseEvent mouseEvent) {
+            super.mouseMoved(mouseEvent);
+            float screenSize = Renderer.pixelsWide;
+            mouseXPosition = screenSize * ((float) mouseEvent.getX() / Renderer.screenWidth) - (screenSize / 2);
         }
-    }
+    };
 
-    private static void renderText(float x, float y, String text) {
+    private void renderText(float x, float y, String text) {
         gl2.glColor3f(0, 0, 0);
         gl2.glRasterPos2f(x, y);
         glut.glutBitmapString(GLUT.BITMAP_HELVETICA_18, text);

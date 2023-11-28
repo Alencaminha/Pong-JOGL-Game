@@ -6,18 +6,16 @@ public class Ball {
     // Engine renderer
     private final GL2 gl2;
 
-    // Colors
-    private float redLevel = 0.5f;
-    private float greenLevel = 0;
-    private float blueLevel = 0.5f;
-
     public Ball(GL2 gl2) {
         this.gl2 = gl2;
     }
 
     public void renderShape(float xPosition, float yPosition) {
-        // Size values
+        // Size and color values
         final float radius = 0.25f;
+        final float redLevel = 0.5f;
+        final float greenLevel = 0;
+        final float blueLevel = 0.5f;
 
         gl2.glTranslatef(xPosition, yPosition, 0);
 
@@ -32,11 +30,5 @@ public class Ball {
         gl2.glFlush();
 
         gl2.glTranslatef(-xPosition, -yPosition, 0);
-    }
-
-    public void setColor(float r, float g, float b) {
-        this.redLevel = Math.max(0, Math.min(1, Math.abs(r)));
-        this.greenLevel = Math.max(0, Math.min(1, Math.abs(g)));
-        this.blueLevel = Math.max(0, Math.min(1, Math.abs(b)));
     }
 }
