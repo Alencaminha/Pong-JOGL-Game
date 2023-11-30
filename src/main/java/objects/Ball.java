@@ -6,8 +6,14 @@ public class Ball {
     // Engine renderer
     private final GL2 gl2;
 
-    public Ball(GL2 gl2) {
+    // Positions
+    public float x;
+    public float y;
+
+    public Ball(GL2 gl2, float x, float y) {
         this.gl2 = gl2;
+        this.x = x;
+        this.y = y;
     }
 
     public void renderShape(float xPosition, float yPosition) {

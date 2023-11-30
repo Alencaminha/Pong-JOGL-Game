@@ -6,8 +6,10 @@ import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.util.gl2.GLUT;
 import objects.Ball;
-import objects.DiamondBlock;
+import objects.Obstacle;
 import objects.Paddle;
+
+import java.util.Random;
 
 public class GameScene implements GLEventListener {
     // Engine renderers
@@ -15,14 +17,20 @@ public class GameScene implements GLEventListener {
     private final GLUT glut = new GLUT();
 
     // Screen sizes
-    private final float screenWidth = Renderer.pixelsWide;
-    private final float screenHeight = Renderer.screenHeight / (Renderer.screenWidth / Renderer.pixelsWide);
+    public static final float screenWidth = 10.0f;
+    private static final float screenHeight = Renderer.getHeight() / (Renderer.getWidth() / screenWidth);
 
     // Game objects
     private Paddle paddle;
     private Ball ball;
-    private DiamondBlock diamondBlock;
-    private float mouseXPosition = 0;
+    private Obstacle obstacle;
+
+    // Game variables
+    private int gameState = 0;
+    private int gamePhase = 0;
+    private float ballXSpeed = 0.0f;
+    private float ballYSpeed = 0.0f;
+    private float mouseXPosition;
 
     @Override
     public void init(GLAutoDrawable glAutoDrawable) {
@@ -31,9 +39,9 @@ public class GameScene implements GLEventListener {
         gl2.glClearColor(1, 1, 1, 1);
 
         // Creating the objects
-        paddle = new Paddle(gl2);
-        ball = new Ball(gl2);
-        diamondBlock = new DiamondBlock(gl2);
+        ball = new Ball(gl2, 0, 0);
+        paddle = new Paddle(gl2, 0, -2.5f);
+        obstacle = new Obstacle(gl2, 0, 2);
     }
 
     @Override
@@ -43,12 +51,23 @@ public class GameScene implements GLEventListener {
 
     @Override
     public void display(GLAutoDrawable glAutoDrawable) {
+        // Renderer
         gl2 = glAutoDrawable.getGL().getGL2();
         gl2.glClear(GL2.GL_COLOR_BUFFER_BIT);
 
-        paddle.renderShape(paddle.getPosition(mouseXPosition), -2);
-        ball.renderShape(2, 0);
-        diamondBlock.renderShape(0, 2);
+        // Ball
+        ball.x += ballXSpeed;
+        ball.y += ballYSpeed;
+        ball.renderShape(ball.x, ball.y);
+
+        // Paddle
+        paddle.x = paddle.getPosition(mouseXPosition);
+        paddle.renderShape(paddle.x, paddle.y);
+
+        // Obstacle
+        if (gamePhase == 0) {
+            obstacle.renderShape(obstacle.x, obstacle.y);
+        }
     }
 
     @Override
@@ -65,6 +84,7 @@ public class GameScene implements GLEventListener {
         public void keyPressed(KeyEvent keyEvent) {
             super.keyPressed(keyEvent);
             if (keyEvent.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                // Ends the program when the player presses the Escape key
                 System.exit(0);
             }
         }
@@ -72,10 +92,29 @@ public class GameScene implements GLEventListener {
 
     MouseAdapter mouseAdapter = new MouseAdapter() {
         @Override
+        public void mouseClicked(MouseEvent mouseEvent) {
+            super.mouseClicked(mouseEvent);
+            gameState++;
+            if (gameState == 1) {
+                // Starts the game
+                float ballSpeed = 0.025f;
+                if (new Random().nextBoolean()) {
+                    ballXSpeed = ballSpeed;
+                } else {
+                    ballXSpeed = -ballSpeed;
+                }
+                ballYSpeed = ballSpeed;
+            } else if (gameState % 2 == 0) {
+                // Pause
+            } else {
+                // Unpause
+            }
+        }
+
+        @Override
         public void mouseMoved(MouseEvent mouseEvent) {
             super.mouseMoved(mouseEvent);
-            float screenSize = Renderer.pixelsWide;
-            mouseXPosition = screenSize * ((float) mouseEvent.getX() / Renderer.screenWidth) - (screenSize / 2);
+            mouseXPosition = screenWidth * ((float) mouseEvent.getX() / Renderer.getWidth()) - (screenWidth / 2);
         }
     };
 

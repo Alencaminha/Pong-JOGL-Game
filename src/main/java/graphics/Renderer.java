@@ -8,20 +8,17 @@ import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.util.FPSAnimator;
 
 public class Renderer {
-    private static GLProfile glProfile = null;
-    public static int screenWidth = 640;
-    public static int screenHeight = 360;
-    public static float pixelsWide = 10;
+    private static GLWindow glWindow;
 
-    public static void init() {
+    public static void main(String[] args) {
         // Initial mandatory setup for everything to have standard settings
         GLProfile.initSingleton();
-        glProfile = GLProfile.get(GLProfile.GL2);
+        GLProfile glProfile = GLProfile.get(GLProfile.GL2);
         GLCapabilities glCapabilities = new GLCapabilities(glProfile);
 
         // Creating and setting some window configurations
-        GLWindow glWindow = GLWindow.create(glCapabilities);
-        glWindow.setSize(screenWidth, screenHeight);
+        glWindow = GLWindow.create(glCapabilities);
+        glWindow.setSize(640, 360);
         glWindow.setResizable(true);
         // glWindow.setFullscreen(true);
 
@@ -39,6 +36,7 @@ public class Renderer {
         glWindow.addWindowListener(new WindowAdapter() {
             @Override
             public void windowDestroyNotify(WindowEvent windowEvent) {
+                super.windowDestroyNotify(windowEvent);
                 fpsAnimator.stop();
                 System.exit(0);
             }
@@ -48,11 +46,11 @@ public class Renderer {
         glWindow.setVisible(true);
     }
 
-    public static GLProfile getGlProfile() {
-        return glProfile;
+    public static int getWidth() {
+        return glWindow.getWidth();
     }
 
-    public static void main(String[] args) {
-        init();
+    public static int getHeight() {
+        return glWindow.getHeight();
     }
 }
