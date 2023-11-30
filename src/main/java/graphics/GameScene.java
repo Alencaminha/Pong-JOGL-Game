@@ -8,6 +8,8 @@ import com.jogamp.opengl.util.gl2.GLUT;
 import objects.Ball;
 import objects.Obstacle;
 import objects.Paddle;
+import others.Collision;
+import others.GameValues;
 
 import java.util.Random;
 
@@ -18,30 +20,33 @@ public class GameScene implements GLEventListener {
 
     // Screen sizes
     public static final float screenWidth = 10.0f;
-    private static final float screenHeight = Renderer.getHeight() / (Renderer.getWidth() / screenWidth);
+    public static final float screenHeight = Renderer.getHeight() / (Renderer.getWidth() / screenWidth);
 
     // Game objects
     private Paddle paddle;
     private Ball ball;
     private Obstacle obstacle;
+    private Collision collision;
 
     // Game variables
     private int gameState = 0;
     private int gamePhase = 0;
-    private float ballXSpeed = 0.0f;
-    private float ballYSpeed = 0.0f;
+    private float ballXSpeed = GameValues.speed[gamePhase];
+    private float ballYSpeed = GameValues.speed[gamePhase];
     private float mouseXPosition;
 
     @Override
     public void init(GLAutoDrawable glAutoDrawable) {
         // Setting the background color to white
         gl2 = glAutoDrawable.getGL().getGL2();
-        gl2.glClearColor(1, 1, 1, 1);
+        gl2.glClearColor(GameValues.screenRed, GameValues.screenGreen,
+                GameValues.screenBlue, GameValues.screenAlpha);
 
         // Creating the objects
-        ball = new Ball(gl2, 0, 0);
-        paddle = new Paddle(gl2, 0, -2.5f);
-        obstacle = new Obstacle(gl2, 0, 2);
+        ball = new Ball(gl2, GameValues.ballStartingX, GameValues.ballStartingY);
+        paddle = new Paddle(gl2, GameValues.paddleStartingX, GameValues.paddleStartingY);
+        obstacle = new Obstacle(gl2, GameValues.obstacleStartingX, GameValues.obstacleStartingY);
+        collision = new Collision(ball, paddle, obstacle);
     }
 
     @Override
@@ -55,17 +60,31 @@ public class GameScene implements GLEventListener {
         gl2 = glAutoDrawable.getGL().getGL2();
         gl2.glClear(GL2.GL_COLOR_BUFFER_BIT);
 
-        // Ball
+        // Checking for collisions
+        switch (collision.getCollision()) {
+            case 1:
+                // Ball bounce from paddle
+                int bounceAngle = GameValues.getBallBounceAngleFromPaddle(ball, paddle);
+                ballXSpeed = (float) (GameValues.speed[gamePhase] * Math.cos(bounceAngle));
+                ballYSpeed = (float) (GameValues.speed[gamePhase] * -Math.sin(bounceAngle));
+                break;
+            case 2:
+                // Ball bounce from obstacle
+                break;
+            default:
+                // Ball keeps traveling as normal
+                break;
+        }
+
+        // Applying movement rules
         ball.x += ballXSpeed;
         ball.y += ballYSpeed;
-        ball.renderShape(ball.x, ball.y);
-
-        // Paddle
         paddle.x = paddle.getPosition(mouseXPosition);
-        paddle.renderShape(paddle.x, paddle.y);
 
-        // Obstacle
-        if (gamePhase == 0) {
+        // Rendering objects
+        ball.renderShape(ball.x, ball.y);
+        paddle.renderShape(paddle.x, paddle.y);
+        if (gamePhase == 1) {
             obstacle.renderShape(obstacle.x, obstacle.y);
         }
     }
@@ -97,13 +116,13 @@ public class GameScene implements GLEventListener {
             gameState++;
             if (gameState == 1) {
                 // Starts the game
-                float ballSpeed = 0.025f;
+                gamePhase++;
                 if (new Random().nextBoolean()) {
-                    ballXSpeed = ballSpeed;
+                    ballXSpeed = GameValues.speed[gamePhase];
                 } else {
-                    ballXSpeed = -ballSpeed;
+                    ballXSpeed = -GameValues.speed[gamePhase];
                 }
-                ballYSpeed = ballSpeed;
+                ballYSpeed = -GameValues.speed[gamePhase];
             } else if (gameState % 2 == 0) {
                 // Pause
             } else {

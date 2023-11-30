@@ -2,19 +2,22 @@ package objects;
 
 import com.jogamp.opengl.GL2;
 import graphics.GameScene;
+import others.GameValues;
 
 public class Paddle {
     // Engine renderer
     private final GL2 gl2;
 
-    // Positions
+    // Positions and size
     public float x;
     public float y;
+    public final float width = GameValues.paddleWidth;
+    public final float height = GameValues.paddleHeight;
 
     // Colors
-    private float red = 0.5f;
-    private float green = 0;
-    private float blue = 0.5f;
+    private float red = GameValues.paddleStartingRed;
+    private float green = GameValues.paddleStartingGreen;
+    private float blue = GameValues.paddleStartingBlue;
 
     public Paddle(GL2 gl2, float x, float y) {
         this.gl2 = gl2;
@@ -23,10 +26,6 @@ public class Paddle {
     }
 
     public void renderShape(float xPosition, float yPosition) {
-        // Size values
-        final float width = 2;
-        final float height = 0.5f;
-
         gl2.glTranslatef(xPosition, yPosition, 0);
 
         // Molding the shape

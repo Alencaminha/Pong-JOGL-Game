@@ -1,19 +1,22 @@
 package objects;
 
 import com.jogamp.opengl.GL2;
+import others.GameValues;
 
 public class Obstacle {
     // Engine renderer
     private final GL2 gl2;
 
-    // Positions
+    // Positions and size
     public float x;
     public float y;
+    public final float width = GameValues.obstacleWidth;
+    public final float height = GameValues.obstacleHeight;
 
     // Colors
-    private float red = 0.5f;
-    private float green = 0;
-    private float blue = 0.5f;
+    private float red = GameValues.obstacleStartingRed;
+    private float green = GameValues.obstacleStartingGreen;
+    private float blue = GameValues.obstacleStartingBlue;
 
     public Obstacle(GL2 gl2, float x, float y) {
         this.gl2 = gl2;
@@ -22,12 +25,8 @@ public class Obstacle {
     }
 
     public void renderShape(float xPosition, float yPosition) {
-        // Size and rotation values
-        final float width = 1;
-        final float height = 1;
-        final float rotation = 45;
-
         // Rotation setup
+        final float rotation = GameValues.obstacleRotation;
         gl2.glTranslatef(xPosition, yPosition, 0);
         gl2.glRotatef(-rotation, 0, 0, 1);
 
