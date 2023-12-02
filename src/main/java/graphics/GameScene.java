@@ -1,6 +1,9 @@
 package graphics;
 
-import com.jogamp.newt.event.*;
+import com.jogamp.newt.event.KeyAdapter;
+import com.jogamp.newt.event.KeyEvent;
+import com.jogamp.newt.event.MouseAdapter;
+import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
@@ -8,8 +11,6 @@ import com.jogamp.opengl.util.gl2.GLUT;
 import objects.Ball;
 import objects.Obstacle;
 import objects.Paddle;
-import others.Collision;
-import others.GameValues;
 
 import java.util.Random;
 
@@ -20,33 +21,31 @@ public class GameScene implements GLEventListener {
 
     // Screen sizes
     public static final float screenWidth = 10.0f;
-    public static final float screenHeight = Renderer.getHeight() / (Renderer.getWidth() / screenWidth);
+    public static final float screenHeight = GameRenderer.getHeight() / (GameRenderer.getWidth() / screenWidth);
 
     // Game objects
     private Paddle paddle;
     private Ball ball;
     private Obstacle obstacle;
-    private Collision collision;
 
     // Game variables
     private int gameState = 0;
     private int gamePhase = 0;
-    private float ballXSpeed = GameValues.speed[gamePhase];
-    private float ballYSpeed = GameValues.speed[gamePhase];
+    private final float[] speed = new float[] {0, 0.025f};
+    private float ballXSpeed = speed[gamePhase];
+    private float ballYSpeed = speed[gamePhase];
     private float mouseXPosition;
 
     @Override
     public void init(GLAutoDrawable glAutoDrawable) {
-        // Setting the background color to white
+        // Setting the background color
         gl2 = glAutoDrawable.getGL().getGL2();
-        gl2.glClearColor(GameValues.screenRed, GameValues.screenGreen,
-                GameValues.screenBlue, GameValues.screenAlpha);
+        gl2.glClearColor(0, 0, 0.2f, 1);
 
         // Creating the objects
-        ball = new Ball(gl2, GameValues.ballStartingX, GameValues.ballStartingY);
-        paddle = new Paddle(gl2, GameValues.paddleStartingX, GameValues.paddleStartingY);
-        obstacle = new Obstacle(gl2, GameValues.obstacleStartingX, GameValues.obstacleStartingY);
-        collision = new Collision(ball, paddle, obstacle);
+        ball = new Ball(gl2, 0, 0);
+        paddle = new Paddle(gl2, 0, -2.5f);
+        obstacle = new Obstacle(gl2, 0, 2);
     }
 
     @Override
@@ -61,7 +60,7 @@ public class GameScene implements GLEventListener {
         gl2.glClear(GL2.GL_COLOR_BUFFER_BIT);
 
         // Checking for collisions
-        switch (collision.getCollision()) {
+        /*switch (collision.getCollision()) {
             case 1:
                 // Ball bounce from paddle
                 int bounceAngle = GameValues.getBallBounceAngleFromPaddle(ball, paddle);
@@ -74,7 +73,7 @@ public class GameScene implements GLEventListener {
             default:
                 // Ball keeps traveling as normal
                 break;
-        }
+        }*/
 
         // Applying movement rules
         ball.x += ballXSpeed;
@@ -118,11 +117,11 @@ public class GameScene implements GLEventListener {
                 // Starts the game
                 gamePhase++;
                 if (new Random().nextBoolean()) {
-                    ballXSpeed = GameValues.speed[gamePhase];
+                    ballXSpeed = speed[gamePhase];
                 } else {
-                    ballXSpeed = -GameValues.speed[gamePhase];
+                    ballXSpeed = -speed[gamePhase];
                 }
-                ballYSpeed = -GameValues.speed[gamePhase];
+                ballYSpeed = -speed[gamePhase];
             } else if (gameState % 2 == 0) {
                 // Pause
             } else {
@@ -133,7 +132,7 @@ public class GameScene implements GLEventListener {
         @Override
         public void mouseMoved(MouseEvent mouseEvent) {
             super.mouseMoved(mouseEvent);
-            mouseXPosition = screenWidth * ((float) mouseEvent.getX() / Renderer.getWidth()) - (screenWidth / 2);
+            mouseXPosition = screenWidth * ((float) mouseEvent.getX() / GameRenderer.getWidth()) - (screenWidth / 2);
         }
     };
 

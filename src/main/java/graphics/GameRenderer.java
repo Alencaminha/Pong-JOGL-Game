@@ -7,7 +7,7 @@ import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.util.FPSAnimator;
 
-public class Renderer {
+public class GameRenderer {
     private static GLWindow glWindow;
 
     public static void main(String[] args) {
@@ -28,8 +28,9 @@ public class Renderer {
         glWindow.addKeyListener(gameScene.keyAdapter);
         glWindow.addMouseListener(gameScene.mouseAdapter);
 
-        // Setting the game to 60 FPS
-        FPSAnimator fpsAnimator = new FPSAnimator(glWindow, 60);
+        // Setting the game to target 60 FPS
+        FPSAnimator fpsAnimator = new FPSAnimator(glWindow, 60, true);
+        fpsAnimator.setFPS(60);
         fpsAnimator.start();
 
         // Properly ends the program when the window is closed

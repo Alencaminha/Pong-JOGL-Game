@@ -2,7 +2,6 @@ package objects;
 
 import com.jogamp.opengl.GL2;
 import graphics.GameScene;
-import others.GameValues;
 
 public class Paddle {
     // Engine renderer
@@ -11,13 +10,13 @@ public class Paddle {
     // Positions and size
     public float x;
     public float y;
-    public final float width = GameValues.paddleWidth;
-    public final float height = GameValues.paddleHeight;
+    public final float width = 2;
+    public final float height = 0.5f;
 
     // Colors
-    private float red = GameValues.paddleStartingRed;
-    private float green = GameValues.paddleStartingGreen;
-    private float blue = GameValues.paddleStartingBlue;
+    private float red = 0.5f;
+    private float green = 0;
+    private float blue = 0.5f;
 
     public Paddle(GL2 gl2, float x, float y) {
         this.gl2 = gl2;
