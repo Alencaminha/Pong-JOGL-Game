@@ -9,8 +9,8 @@ public class Obstacle {
     // Positions and size
     public float x;
     public float y;
-    public final float width = 1;
-    public final float height = 1;
+    public final float width = 1.5f;
+    public final float height = 0.5f;
 
     // Colors
     private float red = 0.5f;
@@ -25,7 +25,7 @@ public class Obstacle {
 
     public void renderShape(float xPosition, float yPosition) {
         // Rotation setup
-        final float rotation = 45;
+        final float rotation = 0;
         gl2.glTranslatef(xPosition, yPosition, 0);
         gl2.glRotatef(-rotation, 0, 0, 1);
 

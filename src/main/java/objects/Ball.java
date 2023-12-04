@@ -38,9 +38,9 @@ public class Ball {
         gl2.glTranslatef(-xPosition, -yPosition, 0);
     }
 
-    private boolean getPaddleCollision(Paddle paddle) {
-        boolean collisionX = this.x + this.radius >= paddle.x &&
-                paddle.x + paddle.width >= this.x;
+    public boolean getPaddleCollision(Paddle paddle) {
+        boolean collisionX = this.x > paddle.x - paddle.width / 2
+                && this.x < paddle.x + paddle.width / 2;
 
         boolean collisionY = this.y + this.radius >= paddle.y &&
                 paddle.y + paddle.height >= this.y;
@@ -54,15 +54,15 @@ public class Ball {
         return (int) (normalizedIntersection * 75);
     }
 
-    private boolean getLeftWallCollision() {
+    public boolean getLeftWallCollision() {
         return this.x <= -((screenWidth / 2) - this.radius);
     }
 
-    private boolean getRightWallCollision() {
+    public boolean getRightWallCollision() {
         return this.x >= (screenWidth / 2) - this.radius;
     }
 
-    private boolean getCeilingCollision() {
+    public boolean getCeilingCollision() {
         return this.y >= (screenHeight / 2) - this.radius;
     }
 
@@ -70,12 +70,13 @@ public class Ball {
         return this.y <= -((screenHeight / 2) - this.radius);
     }
 
-    private boolean getObstacleCollision(Obstacle obstacle) {
-        boolean collisionX = this.x + this.radius >= obstacle.x &&
-                obstacle.x + obstacle.width >= this.x;
+    public boolean getObstacleCollision(Obstacle obstacle) {
 
-        boolean collisionY = this.y + this.radius >= obstacle.y &&
-                obstacle.y + obstacle.height >= this.y;
+        boolean collisionX = this.x - radius <= obstacle.x + obstacle.width / 2
+                          && this.x + radius >= obstacle.x - obstacle.width / 2;
+
+        boolean collisionY = this.y + this.radius >= obstacle.y - obstacle.height / 2
+                          && this.y - this.radius <= obstacle.y + obstacle.height / 2;
 
         return collisionX && collisionY;
     }

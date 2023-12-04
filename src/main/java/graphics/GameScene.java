@@ -34,7 +34,13 @@ public class GameScene implements GLEventListener {
     private final float[] speed = new float[] {0, 0.025f};
     private float ballXSpeed = speed[gamePhase];
     private float ballYSpeed = speed[gamePhase];
+
+    private float liveballXSpeed;
+    private float liveballYSpeed;
     private float mouseXPosition;
+    private float mouseYPosition;
+
+    private boolean isPaused = false;
 
     @Override
     public void init(GLAutoDrawable glAutoDrawable) {
@@ -45,7 +51,8 @@ public class GameScene implements GLEventListener {
         // Creating the objects
         ball = new Ball(gl2, 0, 0);
         paddle = new Paddle(gl2, 0, -2.5f);
-        obstacle = new Obstacle(gl2, 0, 2);
+        obstacle = new Obstacle(gl2, 0, 2f);
+
     }
 
     @Override
@@ -78,14 +85,36 @@ public class GameScene implements GLEventListener {
         // Applying movement rules
         ball.x += ballXSpeed;
         ball.y += ballYSpeed;
+
+
+        if (ball.getPaddleCollision(paddle)) {
+         ballYSpeed = -ballYSpeed;
+        }
+
+        if (ball.getLeftWallCollision() || ball.getRightWallCollision()) {
+            ballXSpeed = -ballXSpeed;
+        }
+
+        if (ball.getCeilingCollision()) {
+            ballYSpeed = -ballYSpeed;
+        }
+
+        if (ball.getObstacleCollision(obstacle)){
+            obstacle.x = (float) Math.random() * (screenWidth / 3 - (-screenWidth / 3)) + -screenWidth / 3;
+            obstacle.y = (float) Math.random() * (screenHeight / 2);
+        } else {
+        }
+
         paddle.x = paddle.getPosition(mouseXPosition);
 
         // Rendering objects
         ball.renderShape(ball.x, ball.y);
         paddle.renderShape(paddle.x, paddle.y);
-        if (gamePhase == 1) {
-            obstacle.renderShape(obstacle.x, obstacle.y);
-        }
+
+
+
+        obstacle.renderShape(obstacle.x, obstacle.y);
+
     }
 
     @Override
@@ -105,6 +134,39 @@ public class GameScene implements GLEventListener {
                 // Ends the program when the player presses the Escape key
                 System.exit(0);
             }
+
+            if (keyEvent.getKeyCode() == KeyEvent.VK_P) {
+
+                if (isPaused) {
+                    // unpause
+                    ballXSpeed = liveballXSpeed;
+                    ballYSpeed = liveballYSpeed;
+                    isPaused = false;
+                }else {
+                    //pause
+                    liveballXSpeed = ballXSpeed;
+                    liveballYSpeed = ballYSpeed;
+
+                    ballXSpeed = 0;
+                    ballYSpeed = 0;
+                    isPaused = true;
+
+                }
+
+            }
+
+            if (keyEvent.getKeyCode() == KeyEvent.VK_SPACE) {
+                ball.x = 0;
+                ball.y = 0;
+
+                if (new Random().nextBoolean()) {
+                    ballXSpeed = speed[1];
+                } else {
+                    ballXSpeed = -speed[1];
+                }
+                ballYSpeed = -speed[1];
+            }
+
         }
     };
 
@@ -112,33 +174,59 @@ public class GameScene implements GLEventListener {
         @Override
         public void mouseClicked(MouseEvent mouseEvent) {
             super.mouseClicked(mouseEvent);
-            gameState++;
-            if (gameState == 1) {
-                // Starts the game
-                gamePhase++;
-                if (new Random().nextBoolean()) {
-                    ballXSpeed = speed[gamePhase];
-                } else {
-                    ballXSpeed = -speed[gamePhase];
-                }
-                ballYSpeed = -speed[gamePhase];
-            } else if (gameState % 2 == 0) {
-                // Pause
-            } else {
-                // Unpause
+
+            if (gameState == 0) {
+
+
             }
+//            if (gameState == 1) {
+                // Starts the game
+//                gamePhase++;
+//                ball.x = 0;
+//                ball.y = 0;
+//                if (new Random().nextBoolean()) {
+//                    ballXSpeed = speed[1];
+//                } else {
+//                    ballXSpeed = -speed[1];
+//                }
+//                ballYSpeed = -speed[1];
+//            } else if (gameState % 2 == 0) {
+                // Pause
+//            } else {
+                // Unpause
+//            }
         }
 
         @Override
         public void mouseMoved(MouseEvent mouseEvent) {
             super.mouseMoved(mouseEvent);
             mouseXPosition = screenWidth * ((float) mouseEvent.getX() / GameRenderer.getWidth()) - (screenWidth / 2);
+            mouseYPosition = screenHeight * ((float) mouseEvent.getY() / GameRenderer.getHeight()) - (screenHeight / 2);
         }
     };
+
+    private void pause(){
+        if (isPaused) {
+            // unpause
+            ballXSpeed = liveballXSpeed;
+            ballYSpeed = liveballYSpeed;
+            isPaused = false;
+        }else {
+            //pause
+            liveballXSpeed = ballXSpeed;
+            liveballYSpeed = ballYSpeed;
+
+            ballXSpeed = 0;
+            ballYSpeed = 0;
+            isPaused = true;
+        }
+    }
 
     private void renderText(float x, float y, String text) {
         gl2.glColor3f(0, 0, 0);
         gl2.glRasterPos2f(x, y);
         glut.glutBitmapString(GLUT.BITMAP_HELVETICA_18, text);
     }
+
+
 }

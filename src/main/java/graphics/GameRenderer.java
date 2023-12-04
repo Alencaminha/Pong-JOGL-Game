@@ -18,7 +18,7 @@ public class GameRenderer {
 
         // Creating and setting some window configurations
         glWindow = GLWindow.create(glCapabilities);
-        glWindow.setSize(640, 360);
+        glWindow.setSize(1200, 800  );
         glWindow.setResizable(true);
         // glWindow.setFullscreen(true);
 
