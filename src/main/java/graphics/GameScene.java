@@ -39,7 +39,13 @@ public class GameScene implements GLEventListener {
     private final float[] speed = new float[] {0, 0.03f, 0.6f};
     private float ballXSpeed = speed[gamePhase];
     private float ballYSpeed = speed[gamePhase];
+
+    private float liveballXSpeed;
+    private float liveballYSpeed;
     private float mouseXPosition;
+    private float mouseYPosition;
+
+    private boolean isPaused = false;
 
     // Game pause saved values
     private float xSpeed;
@@ -53,9 +59,11 @@ public class GameScene implements GLEventListener {
         gl2.glClearColor(red, green, blue, 1);
 
         // Creating the objects
-        ball = new Ball(gl2);
-        paddle = new Paddle(gl2);
-        obstacle = new Obstacle(gl2);
+        ball = new Ball(gl2, 0, 0);
+        paddle = new Paddle(gl2, 0, -2.5f);
+        obstacle = new Obstacle(gl2, 0, 2f);
+
+
     }
 
     @Override
@@ -69,60 +77,57 @@ public class GameScene implements GLEventListener {
         gl2 = glAutoDrawable.getGL().getGL2();
         gl2.glClear(GL2.GL_COLOR_BUFFER_BIT);
 
-        if (gamePhase == 0) {
-            // Main menu
-            renderText(0, 0, "INSTRUCTIONS");
-        } else if (gamePhase == 3) {
-            // End screen
-            renderText(-0.8f, 0, "GAME OVER");
-        } else {
-            // Checking for collisions
-            if (ball.getPaddleCollision(paddle)) {
-                int bounceAngle = ball.getPaddleBounceAngle(paddle);
-                ballXSpeed = (float) (speed[gamePhase] * Math.cos(bounceAngle));
-                ballYSpeed = (float) (speed[gamePhase] * -Math.sin(bounceAngle));
-                paddle.setColor(new Random().nextFloat(1), new Random().nextFloat(1), new Random().nextFloat(1));
-                playerPoints++;
-                checkPhase();
-            } else if (ball.getSideWallsCollision()) {
-                ballXSpeed = -ballXSpeed;
-                playerPoints++;
-                checkPhase();
-            } else if (ball.getCeilingCollision()) {
-                ballYSpeed = -ballYSpeed;
-                playerPoints++;
-                checkPhase();
-            } else if (ball.getFloorCollision()) {
-                // Player loses a live and the ball resets its position and angle movement
-                playerLives--;
-                if (playerLives > 0) {
-                    ball.x = 0;
-                    ball.y = 0;
-                    if (new Random().nextBoolean()) {
-                        ballXSpeed = speed[gamePhase];
-                    } else {
-                        ballXSpeed = -speed[gamePhase];
-                    }
-                    ballYSpeed = speed[gamePhase];
-                } else gamePhase = 3;
-            }
 
-            // The game continues while the player still have lives
-            if (playerLives > 0) {
-                // Applying movement rules
-                ball.x += ballXSpeed;
-                ball.y += ballYSpeed;
-                if (playerCanMove) paddle.x = paddle.getPosition(mouseXPosition);
+        // Checking for collisions
+        /*switch (collision.getCollision()) {
+            case 1:
+                // Ball bounce from paddle
+                int bounceAngle = GameValues.getBallBounceAngleFromPaddle(ball, paddle);
+                ballXSpeed = (float) (GameValues.speed[gamePhase] * Math.cos(bounceAngle));
+                ballYSpeed = (float) (GameValues.speed[gamePhase] * -Math.sin(bounceAngle));
+                break;
+            case 2:
+                // Ball bounce from obstacle
+                break;
+            default:
+                // Ball keeps traveling as normal
+                break;
+        }*/
 
-                // Rendering objects
-                renderText(-4.5f, 2, "Lives: " + playerLives);
-                ball.renderShape(ball.x, ball.y);
-                paddle.renderShape(paddle.x, paddle.y);
-                if (gamePhase > 0) obstacle.renderShape(obstacle.x, obstacle.y);
-            } else {
-                System.out.println("GAME OVER");
-            }
+        // Applying movement rules
+        ball.x += ballXSpeed;
+        ball.y += ballYSpeed;
+
+
+        if (ball.getPaddleCollision(paddle)) {
+         ballYSpeed = -ballYSpeed;
         }
+
+        if (ball.getLeftWallCollision() || ball.getRightWallCollision()) {
+            ballXSpeed = -ballXSpeed;
+        }
+
+        if (ball.getCeilingCollision()) {
+            ballYSpeed = -ballYSpeed;
+        }
+
+        if (ball.getObstacleCollision(obstacle)){
+            obstacle.x = (float) Math.random() * (screenWidth / 3 - (-screenWidth / 3)) + -screenWidth / 3;
+            obstacle.y = (float) Math.random() * (screenHeight / 2);
+        } else {
+        }
+
+        paddle.x = paddle.getPosition(mouseXPosition);
+
+        // Rendering objects
+        ball.renderShape(ball.x, ball.y);
+        paddle.renderShape(paddle.x, paddle.y);
+
+
+
+        obstacle.renderShape(obstacle.x, obstacle.y);
+
+
     }
 
     @Override
@@ -143,6 +148,39 @@ public class GameScene implements GLEventListener {
                 GameRenderer.fpsAnimator.stop();
                 System.exit(0);
             }
+
+            if (keyEvent.getKeyCode() == KeyEvent.VK_P) {
+
+                if (isPaused) {
+                    // unpause
+                    ballXSpeed = liveballXSpeed;
+                    ballYSpeed = liveballYSpeed;
+                    isPaused = false;
+                }else {
+                    //pause
+                    liveballXSpeed = ballXSpeed;
+                    liveballYSpeed = ballYSpeed;
+
+                    ballXSpeed = 0;
+                    ballYSpeed = 0;
+                    isPaused = true;
+
+                }
+
+            }
+
+            if (keyEvent.getKeyCode() == KeyEvent.VK_SPACE) {
+                ball.x = 0;
+                ball.y = 0;
+
+                if (new Random().nextBoolean()) {
+                    ballXSpeed = speed[1];
+                } else {
+                    ballXSpeed = -speed[1];
+                }
+                ballYSpeed = -speed[1];
+            }
+
         }
     };
 
@@ -150,37 +188,54 @@ public class GameScene implements GLEventListener {
         @Override
         public void mouseClicked(MouseEvent mouseEvent) {
             super.mouseClicked(mouseEvent);
-            gameState++;
-            if (gameState == 1) {
-                // Starts the game
-                gamePhase++;
-                if (new Random().nextBoolean()) {
-                    ballXSpeed = speed[gamePhase];
-                } else {
-                    ballXSpeed = -speed[gamePhase];
-                }
-                ballYSpeed = -speed[gamePhase];
-            } else if (gameState % 2 == 0) {
-                // Pause the game
-                xSpeed = ballXSpeed;
-                ballXSpeed = 0;
-                ySpeed = ballYSpeed;
-                ballYSpeed = 0;
-                playerCanMove = false;
-            } else {
-                // Unpause the game
-                ballXSpeed = xSpeed;
-                ballYSpeed = ySpeed;
-                playerCanMove = true;
+
+            if (gameState == 0) {
+
+
             }
+//            if (gameState == 1) {
+                // Starts the game
+//                gamePhase++;
+//                ball.x = 0;
+//                ball.y = 0;
+//                if (new Random().nextBoolean()) {
+//                    ballXSpeed = speed[1];
+//                } else {
+//                    ballXSpeed = -speed[1];
+//                }
+//                ballYSpeed = -speed[1];
+//            } else if (gameState % 2 == 0) {
+                // Pause
+//            } else {
+                // Unpause
+//            }
+
         }
 
         @Override
         public void mouseMoved(MouseEvent mouseEvent) {
             super.mouseMoved(mouseEvent);
             mouseXPosition = screenWidth * ((float) mouseEvent.getX() / GameRenderer.getWidth()) - (screenWidth / 2);
+            mouseYPosition = screenHeight * ((float) mouseEvent.getY() / GameRenderer.getHeight()) - (screenHeight / 2);
         }
     };
+
+    private void pause(){
+        if (isPaused) {
+            // unpause
+            ballXSpeed = liveballXSpeed;
+            ballYSpeed = liveballYSpeed;
+            isPaused = false;
+        }else {
+            //pause
+            liveballXSpeed = ballXSpeed;
+            liveballYSpeed = ballYSpeed;
+
+            ballXSpeed = 0;
+            ballYSpeed = 0;
+            isPaused = true;
+        }
+    }
 
     private void renderText(float x, float y, String text) {
         gl2.glColor3f(0, 0, 0);
@@ -193,4 +248,5 @@ public class GameScene implements GLEventListener {
         else if (playerPoints < 15) gamePhase = 2;
         else gamePhase = 3;
     }
+
 }
