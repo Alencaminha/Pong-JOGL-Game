@@ -9,6 +9,7 @@ import com.jogamp.opengl.util.FPSAnimator;
 
 public class GameRenderer {
     private static GLWindow glWindow;
+    public static FPSAnimator fpsAnimator;
 
     public static void main(String[] args) {
         // Initial mandatory setup for everything to have standard settings
@@ -29,7 +30,7 @@ public class GameRenderer {
         glWindow.addMouseListener(gameScene.mouseAdapter);
 
         // Setting the game to target 60 FPS
-        FPSAnimator fpsAnimator = new FPSAnimator(glWindow, 60, true);
+        fpsAnimator = new FPSAnimator(glWindow, 60, true);
         fpsAnimator.setFPS(60);
         fpsAnimator.start();
 
