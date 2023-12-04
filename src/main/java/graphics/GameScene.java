@@ -11,6 +11,10 @@ import com.jogamp.opengl.util.gl2.GLUT;
 import objects.Ball;
 import objects.Obstacle;
 import objects.Paddle;
+import textures.Heart;
+import textures.Logo;
+import textures.PlayButton;
+import textures.QuitButton;
 
 import java.util.Random;
 
@@ -22,21 +26,27 @@ public class GameScene implements GLEventListener {
     // Screen size and colors
     public static final float screenWidth = 10.0f;
     public static final float screenHeight = GameRenderer.getHeight() / (GameRenderer.getWidth() / screenWidth);
-    private static final float red = (float) 68 / 255;
-    private static final float green = (float) 85 / 255;
-    private static final float blue = (float) 148 / 255;
+    private static final float red = (float) 0 / 255;
+    private static final float green = (float) 0 / 255;
+    private static final float blue = (float) 0 / 255;
 
-    // Game objects
+    // Plain objects
     private Paddle paddle;
     private Ball ball;
     private Obstacle obstacle;
 
+    // Texture objects
+    private Logo logo;
+    private PlayButton playButton;
+    private QuitButton quitButton;
+    private Heart[] heart;
+
     // Game variables
     private int gamePhase = 0;
-    private int gameState = 0;
+    private boolean isGamePaused = false;
     private int playerLives = 3;
     private int playerPoints = 0;
-    private final float[] speed = new float[] {0, 0.03f, 0.6f};
+    private final float[] speed = new float[] {0, 0.03f, 0.06f};
     private float ballXSpeed = speed[gamePhase];
     private float ballYSpeed = speed[gamePhase];
     private float mouseXPosition;
@@ -56,6 +66,9 @@ public class GameScene implements GLEventListener {
         ball = new Ball(gl2);
         paddle = new Paddle(gl2);
         obstacle = new Obstacle(gl2);
+        logo = new Logo(gl2);
+        playButton = new PlayButton(gl2);
+        quitButton = new QuitButton(gl2);
     }
 
     @Override
@@ -71,6 +84,9 @@ public class GameScene implements GLEventListener {
 
         if (gamePhase == 0) {
             // Main menu
+            logo.renderShape();
+            playButton.renderShape();
+            quitButton.renderShape();
             renderText(0, 0, "INSTRUCTIONS");
         } else if (gamePhase == 3) {
             // End screen
@@ -142,6 +158,19 @@ public class GameScene implements GLEventListener {
                 // Ends the program when the player presses the Escape key
                 GameRenderer.fpsAnimator.stop();
                 System.exit(0);
+            } else if (keyEvent.getKeyCode() == KeyEvent.VK_SPACE) {
+                isGamePaused = !isGamePaused;
+                if (isGamePaused) {
+                    xSpeed = ballXSpeed;
+                    ballXSpeed = 0;
+                    ySpeed = ballYSpeed;
+                    ballYSpeed = 0;
+                    playerCanMove = false;
+                } else {
+                    ballXSpeed = xSpeed;
+                    ballYSpeed = ySpeed;
+                    playerCanMove = true;
+                }
             }
         }
     };
@@ -150,8 +179,12 @@ public class GameScene implements GLEventListener {
         @Override
         public void mouseClicked(MouseEvent mouseEvent) {
             super.mouseClicked(mouseEvent);
-            gameState++;
-            if (gameState == 1) {
+            float mx = screenWidth * ((float) mouseEvent.getX() / GameRenderer.getWidth()) - (screenWidth / 2);
+            float my = screenHeight * ((float) mouseEvent.getY() / GameRenderer.getWidth()) - (screenHeight / 2);
+            System.out.println("mx: " + mx);
+            System.out.println("my: " + my);
+            if (mx > playButton.x - (playButton.width / 2) && mx < playButton.x + (playButton.width / 2)
+            && my < playButton.y - (playButton.height / 2) && my > playButton.y + (playButton.height / 2)) {
                 // Starts the game
                 gamePhase++;
                 if (new Random().nextBoolean()) {
@@ -160,18 +193,11 @@ public class GameScene implements GLEventListener {
                     ballXSpeed = -speed[gamePhase];
                 }
                 ballYSpeed = -speed[gamePhase];
-            } else if (gameState % 2 == 0) {
-                // Pause the game
-                xSpeed = ballXSpeed;
-                ballXSpeed = 0;
-                ySpeed = ballYSpeed;
-                ballYSpeed = 0;
-                playerCanMove = false;
-            } else {
-                // Unpause the game
-                ballXSpeed = xSpeed;
-                ballYSpeed = ySpeed;
-                playerCanMove = true;
+            } else if (mx > quitButton.x - (quitButton.width / 2) && mx < quitButton.x + (quitButton.width / 2)
+                    && my > quitButton.y - (quitButton.height / 2) && my < quitButton.y + (quitButton.height / 2)) {
+                // Quits the game
+                GameRenderer.fpsAnimator.stop();
+                System.exit(0);
             }
         }
 
@@ -183,7 +209,7 @@ public class GameScene implements GLEventListener {
     };
 
     private void renderText(float x, float y, String text) {
-        gl2.glColor3f(0, 0, 0);
+        gl2.glColor3f(1, 1, 1);
         gl2.glRasterPos2f(x, y);
         glut.glutBitmapString(GLUT.BITMAP_HELVETICA_18, text);
     }

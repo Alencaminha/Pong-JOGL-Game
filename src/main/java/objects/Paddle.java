@@ -28,10 +28,10 @@ public class Paddle {
         // Molding the shape
         gl2.glColor3f(red, green, blue);
         gl2.glBegin(GL2.GL_QUADS);
-        gl2.glVertex2f(-width / 2, -height / 2);
-        gl2.glVertex2f(width / 2, -height / 2);
-        gl2.glVertex2f(width / 2, height / 2);
-        gl2.glVertex2f(-width / 2, height / 2);
+            gl2.glVertex2f(-width / 2, -height / 2);
+            gl2.glVertex2f(width / 2, -height / 2);
+            gl2.glVertex2f(width / 2, height / 2);
+            gl2.glVertex2f(-width / 2, height / 2);
         gl2.glEnd();
         gl2.glFlush();
 
