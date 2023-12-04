@@ -8,8 +8,8 @@ public class Paddle {
     private final GL2 gl2;
 
     // Positions and size
-    public float x;
-    public float y;
+    public float x = 0;
+    public float y = -2.5f;
     public final float width = 2;
     public final float height = 0.5f;
 
@@ -18,14 +18,12 @@ public class Paddle {
     private float green = 0;
     private float blue = 0.5f;
 
-    public Paddle(GL2 gl2, float x, float y) {
+    public Paddle(GL2 gl2) {
         this.gl2 = gl2;
-        this.x = x;
-        this.y = y;
     }
 
-    public void renderShape(float xPosition, float yPosition) {
-        gl2.glTranslatef(xPosition, yPosition, 0);
+    public void renderShape(float x, float y) {
+        gl2.glTranslatef(x, y, 0);
 
         // Molding the shape
         gl2.glColor3f(red, green, blue);
@@ -37,7 +35,7 @@ public class Paddle {
         gl2.glEnd();
         gl2.glFlush();
 
-        gl2.glTranslatef(-xPosition, -yPosition, 0);
+        gl2.glTranslatef(-x, -y, 0);
     }
 
     public void setColor(float r, float g, float b) {
@@ -47,7 +45,7 @@ public class Paddle {
     }
 
     public float getPosition(float mouseXPosition) {
-        float paddleLimit = (GameScene.screenWidth / 2) - 1;
+        float paddleLimit = (GameScene.screenWidth / 2) - (this.width / 2);
         if (mouseXPosition < -paddleLimit) {
             return -paddleLimit;
         } else return Math.min(mouseXPosition, paddleLimit);

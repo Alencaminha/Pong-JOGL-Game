@@ -8,22 +8,20 @@ public class Ball {
     private final GL2 gl2;
 
     // Positions and size
-    public float x;
-    public float y;
+    public float x = 0;
+    public float y = 0;
     public final float radius = 0.25f;
 
     // Screen
     private final float screenWidth = GameScene.screenWidth;
     private final float screenHeight = GameScene.screenHeight;
 
-    public Ball(GL2 gl2, float x, float y) {
+    public Ball(GL2 gl2) {
         this.gl2 = gl2;
-        this.x = x;
-        this.y = y;
     }
 
-    public void renderShape(float xPosition, float yPosition) {
-        gl2.glTranslatef(xPosition, yPosition, 0);
+    public void renderShape(float x, float y) {
+        gl2.glTranslatef(x, y, 0);
 
         // Molding the shape
         gl2.glColor3f(1, 1, 1);
@@ -35,12 +33,14 @@ public class Ball {
         gl2.glEnd();
         gl2.glFlush();
 
-        gl2.glTranslatef(-xPosition, -yPosition, 0);
+        gl2.glTranslatef(-x, -y, 0);
     }
 
     public boolean getPaddleCollision(Paddle paddle) {
+
         boolean collisionX = this.x > paddle.x - paddle.width / 2
                 && this.x < paddle.x + paddle.width / 2;
+
 
         boolean collisionY = this.y + this.radius >= paddle.y &&
                 paddle.y + paddle.height >= this.y;
@@ -54,6 +54,7 @@ public class Ball {
         return (int) (normalizedIntersection * 75);
     }
 
+
     public boolean getLeftWallCollision() {
         return this.x <= -((screenWidth / 2) - this.radius);
     }
@@ -62,11 +63,12 @@ public class Ball {
         return this.x >= (screenWidth / 2) - this.radius;
     }
 
+
     public boolean getCeilingCollision() {
         return this.y >= (screenHeight / 2) - this.radius;
     }
 
-    private boolean getFloorCollision() {
+    public boolean getFloorCollision() {
         return this.y <= -((screenHeight / 2) - this.radius);
     }
 

@@ -7,26 +7,27 @@ public class Obstacle {
     private final GL2 gl2;
 
     // Positions and size
+
     public float x;
     public float y;
     public final float width = 1.5f;
     public final float height = 0.5f;
+
 
     // Colors
     private float red = 0.5f;
     private float green = 0;
     private float blue = 0.5f;
 
-    public Obstacle(GL2 gl2, float x, float y) {
+    public Obstacle(GL2 gl2) {
         this.gl2 = gl2;
-        this.x = x;
-        this.y = y;
     }
 
-    public void renderShape(float xPosition, float yPosition) {
+    public void renderShape(float x, float y) {
         // Rotation setup
         final float rotation = 0;
         gl2.glTranslatef(xPosition, yPosition, 0);
+
         gl2.glRotatef(-rotation, 0, 0, 1);
 
         // Molding the shape
@@ -41,7 +42,7 @@ public class Obstacle {
 
         // Rotation cleanup
         gl2.glRotatef(rotation, 0, 0, 1);
-        gl2.glTranslatef(-xPosition, -yPosition, 0);
+        gl2.glTranslatef(-x, -y, 0);
     }
 
     public void setColor(float r, float g, float b) {

@@ -19,9 +19,12 @@ public class GameScene implements GLEventListener {
     private GL2 gl2;
     private final GLUT glut = new GLUT();
 
-    // Screen sizes
+    // Screen size and colors
     public static final float screenWidth = 10.0f;
     public static final float screenHeight = GameRenderer.getHeight() / (GameRenderer.getWidth() / screenWidth);
+    private static final float red = (float) 68 / 255;
+    private static final float green = (float) 85 / 255;
+    private static final float blue = (float) 148 / 255;
 
     // Game objects
     private Paddle paddle;
@@ -29,9 +32,11 @@ public class GameScene implements GLEventListener {
     private Obstacle obstacle;
 
     // Game variables
-    private int gameState = 0;
     private int gamePhase = 0;
-    private final float[] speed = new float[] {0, 0.025f};
+    private int gameState = 0;
+    private int playerLives = 3;
+    private int playerPoints = 0;
+    private final float[] speed = new float[] {0, 0.03f, 0.6f};
     private float ballXSpeed = speed[gamePhase];
     private float ballYSpeed = speed[gamePhase];
 
@@ -42,16 +47,22 @@ public class GameScene implements GLEventListener {
 
     private boolean isPaused = false;
 
+    // Game pause saved values
+    private float xSpeed;
+    private float ySpeed;
+    private boolean playerCanMove = true;
+
     @Override
     public void init(GLAutoDrawable glAutoDrawable) {
         // Setting the background color
         gl2 = glAutoDrawable.getGL().getGL2();
-        gl2.glClearColor(0, 0, 0.2f, 1);
+        gl2.glClearColor(red, green, blue, 1);
 
         // Creating the objects
         ball = new Ball(gl2, 0, 0);
         paddle = new Paddle(gl2, 0, -2.5f);
         obstacle = new Obstacle(gl2, 0, 2f);
+
 
     }
 
@@ -62,9 +73,10 @@ public class GameScene implements GLEventListener {
 
     @Override
     public void display(GLAutoDrawable glAutoDrawable) {
-        // Renderer
+        // Renderer setup
         gl2 = glAutoDrawable.getGL().getGL2();
         gl2.glClear(GL2.GL_COLOR_BUFFER_BIT);
+
 
         // Checking for collisions
         /*switch (collision.getCollision()) {
@@ -115,6 +127,7 @@ public class GameScene implements GLEventListener {
 
         obstacle.renderShape(obstacle.x, obstacle.y);
 
+
     }
 
     @Override
@@ -132,6 +145,7 @@ public class GameScene implements GLEventListener {
             super.keyPressed(keyEvent);
             if (keyEvent.getKeyCode() == KeyEvent.VK_ESCAPE) {
                 // Ends the program when the player presses the Escape key
+                GameRenderer.fpsAnimator.stop();
                 System.exit(0);
             }
 
@@ -195,6 +209,7 @@ public class GameScene implements GLEventListener {
 //            } else {
                 // Unpause
 //            }
+
         }
 
         @Override
@@ -228,5 +243,10 @@ public class GameScene implements GLEventListener {
         glut.glutBitmapString(GLUT.BITMAP_HELVETICA_18, text);
     }
 
+    private void checkPhase() {
+        if (playerPoints < 5) gamePhase = 1;
+        else if (playerPoints < 15) gamePhase = 2;
+        else gamePhase = 3;
+    }
 
 }
