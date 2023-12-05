@@ -110,6 +110,8 @@ public class GameScene implements GLEventListener {
             renderText(-4, 0.5f, "FAÇA A BOLA BATER NOS CANTOS, NA TÁBUA E OBSTACULO");
             renderText(-4, 0, "PARA GANHAR PONTOS. AO ATINGIR 5 PONTOS VOCÊ SOBE");
             renderText(-4, -0.5f, "DE FASE, E COM 15 VOCÊ VENCE O JOGO!");
+            renderText(-4, -1, "A TECLA DE ESPAÇO PAUSA E DESPAUSA O JOGO");
+            renderText(-4, -1.5f, "E A TECLA DE ESCAPE FECHA O JOGO.");
         } else if (gamePhase == 3) {
             // End screen
             if (playerPoints >= 15) renderText(-0.8f, 0, "PARABENS");
