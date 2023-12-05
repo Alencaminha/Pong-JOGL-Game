@@ -17,11 +17,9 @@ public class GameRenderer {
         GLProfile glProfile = GLProfile.get(GLProfile.GL2);
         GLCapabilities glCapabilities = new GLCapabilities(glProfile);
 
-        // Creating and setting some window configurations
+        // Creating the window
         glWindow = GLWindow.create(glCapabilities);
-        glWindow.setSize(640, 360);
-        glWindow.setResizable(true);
-        // glWindow.setFullscreen(true);
+        glWindow.setFullscreen(true);
 
         // Adding the listeners
         GameScene gameScene = new GameScene();

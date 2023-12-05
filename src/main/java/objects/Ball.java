@@ -40,8 +40,7 @@ public class Ball {
         boolean collisionX = this.x + this.radius >= paddle.x &&
                 paddle.x + paddle.width >= this.x;
 
-        boolean collisionY = this.y + this.radius >= paddle.y &&
-                paddle.y + paddle.height >= this.y;
+        boolean collisionY = this.y - this.radius <= paddle.y + (paddle.height / 2);
 
         return collisionX && collisionY;
     }

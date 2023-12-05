@@ -11,8 +11,8 @@ public class Heart {
     // Position and size
     public float x;
     public float y;
-    public final float width = 0.5f;
-    public final float height = 0.5f;
+    public final float width = 0.75f;
+    public final float height = 0.75f;
 
     public Heart(GL2 gl2) {
         this.gl2 = gl2;

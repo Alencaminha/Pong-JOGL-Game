@@ -10,7 +10,7 @@ public class PlayButton {
 
     // Position and size
     public final float x = -1;
-    public final float y = -2;
+    public final float y = -2.5f;
     public final float width = 1;
     public final float height = 1;
 
