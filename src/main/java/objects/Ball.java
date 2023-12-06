@@ -1,7 +1,7 @@
 package objects;
 
 import com.jogamp.opengl.GL2;
-import graphics.GameScene;
+import engine.GameScene;
 
 public class Ball {
     // Engine renderer
@@ -37,10 +37,13 @@ public class Ball {
     }
 
     public boolean getPaddleCollision(Paddle paddle) {
-        boolean collisionX = this.x + this.radius >= paddle.x &&
-                paddle.x + paddle.width >= this.x;
+        boolean collisionX = (this.x + this.radius) > (paddle.x - (paddle.width / 2)) &&
+                (this.x - this.radius) < (paddle.x + (paddle.width / 2)) &&
+                this.x < (paddle.x + (paddle.width / 2)) &&
+                this.x > (paddle.x - (paddle.width / 2));
 
-        boolean collisionY = this.y - this.radius <= paddle.y + (paddle.height / 2);
+        boolean collisionY = (this.y - this.radius) < (paddle.y + (paddle.height / 2)) &&
+                this.y > (paddle.y - (paddle.height / 2));
 
         return collisionX && collisionY;
     }
@@ -64,11 +67,15 @@ public class Ball {
     }
 
     public boolean getObstacleCollision(Obstacle obstacle) {
-        boolean collisionX = this.x + this.radius >= obstacle.x &&
-                obstacle.x + obstacle.width >= this.x;
+        boolean collisionX = (this.x + this.radius) > (obstacle.x - (obstacle.width / 2)) &&
+                (this.x - this.radius) < (obstacle.x + (obstacle.width / 2)) &&
+                this.x < (obstacle.x + (obstacle.width / 2)) &&
+                this.x > (obstacle.x - (obstacle.width / 2));
 
-        boolean collisionY = this.y + this.radius >= obstacle.y &&
-                obstacle.y + obstacle.height >= this.y;
+        boolean collisionY = (this.y + this.radius) > (obstacle.y - (obstacle.height / 2)) &&
+                (this.y - this.radius) < (obstacle.y + (obstacle.height / 2)) &&
+                this.y < (obstacle.y + (obstacle.height / 2)) &&
+                this.y > (obstacle.y - (obstacle.height / 2));
 
         return collisionX && collisionY;
     }

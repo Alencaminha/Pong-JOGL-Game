@@ -1,7 +1,7 @@
 package objects;
 
 import com.jogamp.opengl.GL2;
-import graphics.GameScene;
+import engine.GameScene;
 
 public class Paddle {
     // Engine renderer

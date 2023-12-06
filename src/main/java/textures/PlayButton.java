@@ -1,7 +1,7 @@
 package textures;
 
 import com.jogamp.opengl.GL2;
-import graphics.TextureRenderer;
+import engine.TextureRenderer;
 
 public class PlayButton {
     // Engine renderer

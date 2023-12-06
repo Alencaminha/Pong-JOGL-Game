@@ -1,4 +1,4 @@
-package graphics;
+package engine;
 
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.texture.Texture;
