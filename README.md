@@ -6,6 +6,7 @@ de aplicativos gráficos.
 
 ## Como executar
 1. Clone o repositório para seu computador
+2. Vá até o diretório e execute o arquivo .jar (é necessário ter o Java instalado na sua máquina).
 
 ## Alunos participantes
 
@@ -13,5 +14,5 @@ de aplicativos gráficos.
 |--------------------------------|--------------|------------------------------------|
 | Alexandre Nascimento Caminha   | 125111370334 | https://github.com/Alencaminha     |
 | Fernanda Beatriz Leme Bergoci  | 125111367122 | https://github.com/FernandaBergoci |
-| Gabriel Cardoso Martins        | 125111135823 | https://github.com/gcmartins11     |
+| Gabriel Cardoso Martins        | 125111358823 | https://github.com/gcmartins11     |
 | Karina de Oliveira Matiolli    | 125111355232 | https://github.com/kamatiolli      |
